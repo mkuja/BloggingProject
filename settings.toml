@@ -1,0 +1,39 @@
+
+[secrets]
+# This file will be loaded as envinroment variables. Make sure it won't go public. The default
+# is good.
+secrets_file = ".env"
+
+
+# These must be changed to sane values before deploying. If you need help.
+# The application will not work properly if these are not set.
+[mandatory-settings]
+server_host = "http://localhost/"
+api_prefix = "/api/v1/"
+timezone = "EET/EEST"  # For correct date/time localization.
+
+
+[flask]
+flask_app = "app:create_app()"
+flask_env = "debug"  # development | debug | production
+mail_server = "stmp.gmail.com"
+mail_port = 456
+# Mail credentials are in the secrets file.
+
+
+[behavior]
+allow_comments = true  # Can registered users comment on blog posts?
+allow_anonymous-comments = true  # Can anonymous users also comment?
+allow_register = true  # Allow user registration.
+verify_email = true  # Makes user verify they used a real email.
+
+
+# CORS-setup is needed when client and server have differing port, protocol
+# or domain from which they're being served from. Read more here:
+# https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
+[cors]
+enable_cors = false
+domain = "localhost"
+protocol = "http"  # Either "http" or "https"
+port = "default"
+
