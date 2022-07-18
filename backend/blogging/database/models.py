@@ -1,10 +1,6 @@
 import datetime
 
-from dependency_injector.wiring import inject, Provide
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, ForeignKey
-
-from blogging import services
-from blogging.containers import container
 
 from sqlalchemy.orm import declarative_base, relationship
 

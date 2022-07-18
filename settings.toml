@@ -8,8 +8,6 @@ secrets_file = ".env"
 # These must be changed to sane values before deploying. If you need help.
 # The application will not work properly if these are not set.
 [mandatory_settings]
-server_host = "http://localhost/"
-api_prefix = "/api/v1/"
 timezone = "EET/EEST"  # For correct date/time localization.
 
 
