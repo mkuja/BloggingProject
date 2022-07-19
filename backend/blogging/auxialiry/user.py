@@ -28,7 +28,7 @@ def create_user(name, username, email, password,
 
 def get_user_by_email(email: str,
                       sservice: SessionService = Provide[Container.session_service]
-                      ) -> Dict:
+                      ) -> Union[Dict, None]:
     """Get user by email address."""
 
     stmt = (select(User)

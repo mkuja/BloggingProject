@@ -1,4 +1,5 @@
 import datetime
+from time import time
 
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, ForeignKey
 
@@ -17,7 +18,8 @@ class User(Base):
     password_hash = Column(String(120), nullable=False)
     is_author = Column(Boolean, nullable=False, default=False)
     is_active = Column(Boolean, nullable=False, default=True)
-    registration_date = Column(DateTime, nullable=False, default=datetime.datetime.now())
+    last_logged_out = Column(Integer, default=time)
+    registration_date = Column(DateTime, nullable=False, default=datetime.datetime.now)
 
     comments = relationship("Comment", back_populates="user")
     blog_posts = relationship("BlogPost", back_populates="user")
@@ -42,7 +44,7 @@ class BlogPost(Base):
 
     id = Column(Integer, primary_key=True)
     title = Column(String, nullable=False)
-    published = Column(DateTime, nullable=False, default=datetime.datetime.now())
+    published = Column(DateTime, nullable=False, default=datetime.datetime.now)
     summary = Column(Text, nullable=True)
     content = Column(Text, nullable=False)
 

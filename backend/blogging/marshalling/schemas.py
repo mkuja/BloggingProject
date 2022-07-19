@@ -8,6 +8,7 @@ class UserSchema(Schema):
     username = fields.Str(required=True)
     email = fields.Str(required=True)
     registration_date = fields.Str(required=True, dump_only=True)
+    last_logged_out = fields.Int(dump_only=True)
     is_active = fields.Bool()
     message = fields.Str(dump_only=True)
 

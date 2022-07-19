@@ -1,19 +1,26 @@
+import datetime
+import time
 from datetime import timedelta
 from typing import Union
 
 from dependency_injector.wiring import Provide
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from passlib.hash import bcrypt
 
+from app import jwt
+from blogging.auxialiry.user import get_user_by_email
 from blogging.containers import Container
 from blogging.database.models import User
 
 from sqlalchemy import select
 
+from blogging.marshalling.schemas import UserSchema
+from blogging.services import SessionService
+
 
 def login(username,
           password,
-          session_service = Provide[Container.session_service]) -> Union[str | bool]:
+          session_service=Provide[Container.session_service]) -> Union[str | bool]:
     """Return a fresh JWT on successful login, False otherwise."""
 
     stmt = (select(User)
@@ -29,4 +36,34 @@ def login(username,
                                        expires_delta=timedelta(minutes=15),
                                        additional_claims=claims)
         return False
+
+
+@jwt_required()
+def logout(sservice: SessionService = Provide[Container.session_service]) -> bool:
+    """Invalidate all user tokens prior to this point in time.
+
+    A JWT is required for this.
+    """
+
+    identity = get_jwt_identity()
+    stmt = (select(User)
+            .where(User.email == identity))
+    with sservice.session as session:
+        user_from_db: User = session.scalar(stmt)
+        if not user_from_db:
+            return False
+        user_from_db.last_logged_out = time.time()
+        session.add(user_from_db)
+        session.commit()
+        return True
+
+
+@jwt.token_in_blocklist_loader
+def check_if_token_is_revoked(jwt_header, jwt_payload: dict):
+    iat = jwt_payload["iat"]
+    sub = jwt_payload["sub"]
+    user = get_user_by_email(sub)
+    if not user:
+        return False
+    return iat < user["last_logged_out"]
 
