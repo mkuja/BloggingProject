@@ -8,8 +8,20 @@ class UserSchema(Schema):
     username = fields.Str(required=True)
     email = fields.Str(required=True)
     registration_date = fields.Str(required=True, dump_only=True)
-    is_active = fields.Bool()  # TODO: Should UI notify user if they've been banned from writing?
+    is_active = fields.Bool()
     message = fields.Str(dump_only=True)
+
+
+class UserPatchSchema(Schema):
+    id = fields.Int(dump_only=True)
+    name = fields.Str()
+    password = fields.Str(load_only=True)
+    username = fields.Str()
+    email = fields.Str()
+    registration_date = fields.Str(dump_only=True)
+    is_active = fields.Bool()
+    message = fields.Str(dump_only=True)
+
 
 
 class Auth(Schema):

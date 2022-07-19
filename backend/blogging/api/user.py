@@ -4,8 +4,11 @@ from flask.views import MethodView
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_smorest import Blueprint
 
-from blogging.auxialiry.user import create_user, get_user_by_email
-from blogging.marshalling.schemas import UserSchema
+from blogging.auxialiry.user import (
+    create_user, get_user_by_email, delete_user_by_id,
+    patch_user_by_id
+)
+from blogging.marshalling.schemas import UserSchema, UserPatchSchema
 import blogging.database.models as models
 
 
@@ -39,8 +42,7 @@ class User(MethodView):
         return {"username": "Anonymous", "name": "Anonymous"}, 200
 
 
-
-@blp.route("/<id>")
+@blp.route("/<int:id>")
 class UserById(MethodView):
 
     @blp.response(204)
@@ -48,12 +50,12 @@ class UserById(MethodView):
         """Delete user by id.
 
         A fresh JWT is required. The JWT has to be either author's or its owner's."""
-        pass
+        delete_user_by_id(id)
 
-    @blp.arguments(UserSchema)
-    @blp.response(200, UserSchema)
+    @blp.arguments(UserPatchSchema)
+    @blp.response(200, UserPatchSchema)
     def patch(self, data, id):
         """Alter user by id.
 
         A fresh JWT is required."""
-        print(data, id)  # TODO: Implement this.
+        return patch_user_by_id(data, id), 200
