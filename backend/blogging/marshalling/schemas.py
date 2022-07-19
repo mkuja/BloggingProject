@@ -1,13 +1,22 @@
 from marshmallow import Schema, fields
 
 
-class User(Schema):
+class UserSchema(Schema):
     id = fields.Int(dump_only=True)
     name = fields.Str(required=True)
+    password = fields.Str(required=True, load_only=True)
     username = fields.Str(required=True)
     email = fields.Str(required=True)
-    registration_date = fields.DateTime()
+    registration_date = fields.Str(required=True, dump_only=True)
     is_active = fields.Bool()  # TODO: Should UI notify user if they've been banned from writing?
+    message = fields.Str(dump_only=True)
+
+
+class Auth(Schema):
+    username = fields.Str(load_only=True, required=True)
+    password = fields.Str(load_only=True, required=True)
+    token = fields.Str(dump_only=True, required=True)
+    message = fields.Str(dump_only=True)
 
 
 class BlogPostImage(Schema):

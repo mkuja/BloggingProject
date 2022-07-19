@@ -13,22 +13,16 @@ class Container(containers.DeclarativeContainer):
             "app"
         ],
         packages=[
-            "blogging.api"
+            "blogging.auxialiry"
         ]
     )
 
-    db_engine_service = providers.Factory(
-        services.DatabaseEngineService,
-        connection_string=getenv("BLOG_CONNECTION_STRING")
+    session_service = providers.Factory(
+        services.SessionService,
+        connection_string=getenv("BLOG_DB_CONNECTION_STRING")
     )
-
-    app_service = providers.Singleton(
-        services.AppService,
-        name="Blog"
-    )
-
 
 container = Container()
-container.config.from_dict(toml.load("../settings.toml"))
+container.config.from_dict(toml.load("settings.toml"))
 
 

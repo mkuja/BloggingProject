@@ -1,0 +1,14 @@
+
+
+
+[blogging_app_defaults]
+secrets_file = ".env"
+mail_server = "stmp.gmail.com"
+mail_port = 456
+timezone = "EET/EEST"  # For correct date/time localization.
+allow_comments = true  # Can registered users comment on blog posts?
+allow_anonymous-comments = true  # Can anonymous users also comment?
+allow_register = true  # Allow user registration.
+verify_email = true  # Makes user verify they used a real email.
+
+
