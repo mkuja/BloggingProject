@@ -1,5 +1,6 @@
+import datetime
 from datetime import date
-from typing import Union, Dict
+from typing import Union, Dict, Literal
 
 from dependency_injector.wiring import Provide
 from sqlalchemy import select, delete
@@ -49,7 +50,7 @@ def patch_blog_post_by_id(id_, data: Dict,
             return
         for key, val in data.items():
             if hasattr(blog_post, key):
-                setattr(blog_post, val)
+                setattr(blog_post, key, val)
         session.add(blog_post)
         session.commit()
         return BlogPostSchema().dump(blog_post)
@@ -59,23 +60,36 @@ def delete_blog_post_by_id(id_, sservice: SessionService = Provide[Container.ses
                            ) -> bool:
     """Delete a blog post by ID.
 
-    :returns Truthy on success. False on failure.
+    :returns True on success. False on failure.
     """
 
     with sservice.session as session:
         stmt = (delete(BlogPost)
                 .where(BlogPost.id == id_))
-        post = session.execute(stmt)
+        session.execute(stmt)
         session.commit()
-        if not post:
-            return False
-        return True
 
 
-def get_blog_posts_by_dates(from_: date, to: date, ssession: SessionService = Provide[Container.session_service]):
+def get_blog_posts_by_dates(from_: Union[date, Literal["any"]],
+                            to:  Union[date, Literal["any"]],
+                            reverse=False,
+                            ssession: SessionService = Provide[Container.session_service]):
     """Get blog posts by from and to dates."""
-
+    from_datetime = datetime.datetime(day=from_.day, month=from_.month, year=from_.year)
+    to_datetime = datetime.datetime(day=to.day, month=to.month,
+                                    year=to.year, hour=23,
+                                    minute=59, second=59)
+    if from_ == "any":
+        from_datetime = datetime.datetime(day=1, month=1, year=1900)
+    if to == "any":
+        to_datetime = datetime.datetime(day=1, month=1, year=datetime.date.today().year+1)
     with ssession.session as session:
-        stmt = (select(BlogPost))
+        stmt = (select(BlogPost)
+                .where(BlogPost.published < to_datetime)
+                .where(BlogPost.published > from_datetime)
+                .order_by(BlogPost.published))
         posts = session.scalars(stmt)
-        return BlogPostSchema(many=True).dump(posts)
+        retval = BlogPostSchema(many=True).dump(posts)
+        if reverse:
+            retval.reverse()
+        return retval

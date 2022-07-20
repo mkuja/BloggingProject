@@ -28,11 +28,10 @@ class CreatePost(MethodView):
             return {"message": "Unprocessable entity."}, 422
 
 
-@blp.route("/<int:id>")
+@blp.route("/<int:id_>")
 class PostById(MethodView):
     """Methods for manipulating posts by ID."""
 
-    @blp.arguments(BlogPostSchema)
     @blp.response(200, schema=BlogPostSchema)
     def get(self, id_):
         """Get blog post by id."""
@@ -54,9 +53,12 @@ class PostById(MethodView):
 
     @blp.response(200)
     def delete(self, id_):
-        """Delete a blog post by id."""
+        """Delete a blog post by id.
+
+        Returns 409 if blog post doesn't exist."""
 
         delete_blog_post_by_id(id_)
+        return {"message": "Deleted."}, 200
 
 
 @blp.route("/by-dates/<date:from_>/<date:to>/")

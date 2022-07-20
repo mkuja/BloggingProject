@@ -10,6 +10,7 @@ class MyDateTimeField(fields.Field):
 
     regexp = re.compile(r"(\d\d?).(\d\d?).(\d{4}), (\d\d?):(\d\d?)")
 
+    # TODO: Implement and test.
     def _deserialize(self, value: datetime, attr, obj, **kwargs):
         m = self.regexp.match(value)
         return datetime(day=int(m.group(1)),
@@ -19,7 +20,6 @@ class MyDateTimeField(fields.Field):
                         minute=int(m.group(5)))
 
     def _serialize(self, value: datetime, attr, data, **kwargs):
-        print(value)
         if isinstance(value, str):
             return value
         return f"{value.day}.{value.month}.{value.year}, {value.hour}:{value.minute}"
