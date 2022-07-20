@@ -1,4 +1,7 @@
 from marshmallow import Schema, fields
+from marshmallow.fields import DateTime
+
+from blogging.marshalling.converters import MyDateTimeField
 
 
 class UserSchema(Schema):
@@ -24,7 +27,6 @@ class UserPatchSchema(Schema):
     message = fields.Str(dump_only=True)
 
 
-
 class Auth(Schema):
     username = fields.Str(load_only=True, required=True)
     password = fields.Str(load_only=True, required=True)
@@ -40,23 +42,27 @@ class BlogPostImage(Schema):
     caption = fields.Str()
 
 
-class BlogPost(Schema):
+class BlogPostSchema(Schema):
     id = fields.Int()
     title = fields.Str(required=True)
-    publish_time = fields.DateTime()
+    published = MyDateTimeField()
     summary = fields.Str()
     content = fields.Str(required=True)
     images = fields.List(
         fields.Nested(BlogPostImage())
     )
-    replies = fields.List(
-        fields.Nested(lambda: BlogPost(exclude=("replies",)))
-    )
+
+
+
+
+    # replies = fields.List(
+    #     fields.Nested(lambda: BlogPostSchema(exclude=("replies",)))
+    # )
 
 
 class BlogPostComment(Schema):
     id = fields.Int(dump_only=True)
     nickname = fields.Str(required=False)
-    blog_post = fields.Nested(BlogPost, required=True)
+    blog_post = fields.Nested(BlogPostSchema, required=True)
     user_id = fields.Int(required=True)
 
