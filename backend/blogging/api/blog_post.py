@@ -1,6 +1,8 @@
 from flask.views import MethodView
+from flask_jwt_extended import jwt_required
 from flask_smorest import Blueprint
 
+from ..auxialiry.user import author_required
 from ..marshalling.schemas import BlogPostSchema
 from ..auxialiry.blog_post import (
     create_new_blog_post, get_blog_post_by_id, patch_blog_post_by_id,
@@ -17,6 +19,8 @@ blp = Blueprint("Blog Post", "Blog Post",
 class CreatePost(MethodView):
     """CRUD Blog Posts."""
 
+    @jwt_required()
+    @author_required
     @blp.arguments(BlogPostSchema)
     @blp.response(201, schema=BlogPostSchema)
     def post(self, new_post):
@@ -32,12 +36,15 @@ class CreatePost(MethodView):
 class PostById(MethodView):
     """Methods for manipulating posts by ID."""
 
+    @jwt_required(optional=True)
     @blp.response(200, schema=BlogPostSchema)
     def get(self, id_):
         """Get blog post by id."""
 
         return get_blog_post_by_id(id_)
 
+    @jwt_required()
+    @author_required
     @blp.arguments(BlogPostSchema)
     @blp.response(200, schema=BlogPostSchema)
     def patch(self, data, id_):
@@ -51,6 +58,8 @@ class PostById(MethodView):
         else:
             return {"message": "Unprocessable entity."}, 422
 
+    @jwt_required()
+    @author_required
     @blp.response(200)
     def delete(self, id_):
         """Delete a blog post by id.
@@ -61,6 +70,7 @@ class PostById(MethodView):
         return {"message": "Deleted."}, 200
 
 
+@jwt_required(optional=True)
 @blp.route("/by-dates/<date:from_>/<date:to>/")
 class PostsByDates(MethodView):
     """Get blog posts by giving a date range."""

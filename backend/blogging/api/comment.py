@@ -1,4 +1,5 @@
 from flask.views import MethodView
+from flask_jwt_extended import jwt_required
 from flask_smorest import Blueprint
 
 from blogging.auxialiry.comment import (
@@ -17,6 +18,7 @@ class CreateComment(MethodView):
     """Make comments.
     """
 
+    @jwt_required(optional=False)  # TODO: Get optional value from database.
     @blp.arguments(BlogPostComment)
     @blp.response(201, schema=BlogPostComment)
     @blp.response(422)
@@ -42,6 +44,7 @@ class CreateComment(MethodView):
 class CommentById(MethodView):
     """Operations on comments by ID"""
 
+    @jwt_required(optional=True)
     @blp.response(200, BlogPostComment)
     @blp.response(404)
     def get(self, id_):
@@ -50,12 +53,12 @@ class CommentById(MethodView):
         ret = get_comment_by_id(id_)
         return ret, 200 if ret else 404
 
+    @jwt_required()
     @blp.response(200, BlogPostComment)
     @blp.response(404)
     @blp.arguments(BlogPostComment)
     def patch(self, data, id_):
         """Update a comment with new values."""
 
-        ret = patch_comment_by_id(id_, data)
-        return ret, 200 if ret else 404
+        return patch_comment_by_id(id_, data)
 

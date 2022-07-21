@@ -1,7 +1,7 @@
 import datetime
 import time
 from datetime import timedelta
-from typing import Union, Dict
+from typing import Union, Dict, Tuple
 
 from dependency_injector.wiring import Provide
 from flask_jwt_extended import (
@@ -44,19 +44,20 @@ def login(username,
         return False
 
 
-def refresh(ssession: SessionService = Provide[Container.session_service]):
+def refresh(ssession: SessionService = Provide[Container.session_service]
+            ) -> Tuple[Dict[str, str], int]:
     identity = get_jwt_identity()
     stmt = (select(User)
             .where(User.email == identity))
     with ssession.session as session:
         user = session.scalar(stmt)
         if not user:
-            return {"message": "Error: No such user."}
+            return {"message": "Error: No such user."}, 404
         claims = {"is_author": user.is_author}
         token = create_access_token(fresh=False,
                                     expires_delta=timedelta(minutes=20),
                                     additional_claims=claims)
-        return {"token": token}
+        return {"token": token}, 200
 
 
 @jwt_required()

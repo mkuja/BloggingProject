@@ -1,6 +1,8 @@
-from typing import Dict, Union
+from functools import wraps
+from typing import Dict, Union, Callable, Tuple
 
 from dependency_injector.wiring import Provide
+from flask_jwt_extended import get_jwt_identity
 from passlib.hash import bcrypt
 from sqlalchemy import select, delete
 from sqlalchemy.exc import IntegrityError
@@ -24,6 +26,35 @@ def create_user(name, username, email, password,
             return UserSchema().dump(user, many=False)
     except IntegrityError as e:
         return {"message": "Email is already registered."}
+
+
+def is_author(email: str, ssession: SessionService = Provide[Container.session_service]):
+    """Check if email given has authority."""
+
+    with ssession.session as session:
+        stmt = (select(User)
+                .where(User.email == email))
+        user = session.scalar(stmt)
+        return user.is_author
+
+
+def author_required(route: Callable):
+    """This is the authorization decorator that checks whether client is an author."""
+
+    @wraps(route)
+    def inner(*args, ssession: SessionService = Provide[Container.session_service], **kwargs):
+        identity = get_jwt_identity()
+        stmt = (select(User)
+                .where(User.email == identity))
+        with ssession.session as session:
+            user = session.scalar(stmt)
+            if user.is_author:
+                return route(*args, **kwargs)
+            return {"message", "User needs author permissions to do this."}, 401
+
+    return inner
+
+
 
 
 def get_user_by_email(email: str,
@@ -51,11 +82,13 @@ def delete_user_by_id(id, sservice: SessionService = Provide[Container.session_s
 
 def patch_user_by_id(new_data: Dict, id: int,
                      sservice: SessionService = Provide[Container.session_service]
-                     ) -> None:
+                     ) -> Tuple[Dict[str, str], int]:
     stmt = (select(User)
             .where(User.id == id))
     with sservice.session as session:
         user = session.scalar(stmt)
+        if user.email != get_jwt_identity():
+            return {"message": "Unauthorized"}, 401
         for key, val in new_data.items():
             if key == "password":
                 user.password_hash = bcrypt.hash(new_data["password"])

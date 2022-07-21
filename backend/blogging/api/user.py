@@ -6,7 +6,7 @@ from flask_smorest import Blueprint
 
 from blogging.auxialiry.user import (
     create_user, get_user_by_email, delete_user_by_id,
-    patch_user_by_id
+    patch_user_by_id, author_required
 )
 from blogging.marshalling.schemas import UserSchema, UserPatchSchema
 import blogging.database.models as models
@@ -45,6 +45,7 @@ class User(MethodView):
 @blp.route("/<int:id>")
 class UserById(MethodView):
 
+    @jwt_required(fresh=True)
     @blp.response(204)
     def delete(self, id):
         """Delete user by id.
@@ -52,10 +53,11 @@ class UserById(MethodView):
         A fresh JWT is required. The JWT has to be either author's or its owner's."""
         delete_user_by_id(id)
 
+    @jwt_required(fresh=True)
     @blp.arguments(UserPatchSchema)
     @blp.response(200, UserPatchSchema)
     def patch(self, data, id):
         """Alter user by id.
 
         A fresh JWT is required."""
-        return patch_user_by_id(data, id), 200
+        return patch_user_by_id(data, id)
