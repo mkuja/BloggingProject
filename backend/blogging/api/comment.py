@@ -31,11 +31,14 @@ class CreateComment(MethodView):
         a reply to another comment. Then `parent_id` is required.
         """
 
-        if not (bool(comment.get("blog_post_id") ^ bool(comment.get("parent_id")))):
-            return {"message": "Argument error: Provide one and only one of blog_post_id or parent_id."}
-        test = get_jwt_identity()
-        print(test)
-        return
+        if not (bool(comment.get("blog_post_id", False) ^ bool(comment.get("parent_id", False)))):
+            return {"message": "Argument error: Provide one and only one of blog_post_id or parent_id."}, 422
+
+        if not get_jwt_identity() and not comment.get("nickname"):
+            return {"message": "Argument error: When not logged in, nickname must be provided for a comment."}, 422
+        elif get_jwt_identity() and comment.get("nickname"):
+            return {"message": "Argument error: A registered user cannot have a nickname."}
+
         if saved_comment := create_new_blog_post_comment(comment):
             return saved_comment, 201
         else:
