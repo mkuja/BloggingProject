@@ -38,11 +38,11 @@ def is_author(email: str, ssession: SessionService = Provide[Container.session_s
         return user.is_author
 
 
-def author_required(route: Callable):
+def author_required(route: Callable, ssession: SessionService = Provide[Container.session_service]):
     """This is the authorization decorator that checks whether client is an author."""
 
     @wraps(route)
-    def inner(*args, ssession: SessionService = Provide[Container.session_service], **kwargs):
+    def inner(*args, ssession=ssession, **kwargs):
         identity = get_jwt_identity()
         stmt = (select(User)
                 .where(User.email == identity))
@@ -50,7 +50,7 @@ def author_required(route: Callable):
             user = session.scalar(stmt)
             if user.is_author:
                 return route(*args, **kwargs)
-            return {"message", "User needs author permissions to do this."}, 401
+            return {"message": "User needs author permissions to do this."}, 401
 
     return inner
 

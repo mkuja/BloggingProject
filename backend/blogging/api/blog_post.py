@@ -79,5 +79,7 @@ class PostsByDates(MethodView):
     def get(self, from_, to):
         """Get blog posts by date range.
 
-        Both ends of the range are inclusive."""
+        Both ends of the range are inclusive. Value of `any`
+        to either `from_` or `to` should make the range
+        extend from that end to future or long in the past."""
         return get_blog_posts_by_dates(from_, to), 200

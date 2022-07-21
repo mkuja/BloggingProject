@@ -1,5 +1,5 @@
 from flask.views import MethodView
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_smorest import Blueprint
 
 from blogging.auxialiry.comment import (
@@ -18,7 +18,7 @@ class CreateComment(MethodView):
     """Make comments.
     """
 
-    @jwt_required(optional=False)  # TODO: Get optional value from database.
+    @jwt_required(optional=True)  # TODO: Get optional value from database.
     @blp.arguments(BlogPostComment)
     @blp.response(201, schema=BlogPostComment)
     @blp.response(422)
@@ -33,6 +33,9 @@ class CreateComment(MethodView):
 
         if not (bool(comment.get("blog_post_id") ^ bool(comment.get("parent_id")))):
             return {"message": "Argument error: Provide one and only one of blog_post_id or parent_id."}
+        test = get_jwt_identity()
+        print(test)
+        return
         if saved_comment := create_new_blog_post_comment(comment):
             return saved_comment, 201
         else:
