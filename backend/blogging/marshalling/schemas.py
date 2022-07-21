@@ -31,6 +31,7 @@ class Auth(Schema):
     username = fields.Str(load_only=True, required=True)
     password = fields.Str(load_only=True, required=True)
     token = fields.Str(dump_only=True, required=True)
+    refresh_token = fields.Str(dump_only=True)
     message = fields.Str(dump_only=True)
 
 
