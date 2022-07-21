@@ -25,13 +25,16 @@ class User(Base):
     blog_posts = relationship("BlogPost", back_populates="user")
 
 
-
 class Comment(Base):
     __tablename__ = "comment"
 
     id = Column(Integer, primary_key=True)
     nickname = Column(String(20), nullable=True)
-    comment = Column(Text, nullable=False)
+    content = Column(Text, nullable=False)
+
+    blog_post_id = Column(Integer, ForeignKey("blog_post.id"))
+    blog_post = relationship("BlogPost", back_populates="comments")
+
     user_id = Column(Integer, ForeignKey("user_account.id"))
     user = relationship("User", back_populates="comments")
 
@@ -48,6 +51,8 @@ class BlogPost(Base):
     summary = Column(Text, nullable=True)
     content = Column(Text, nullable=False)
 
+    comments = relationship("Comment", back_populates="blog_post")
+
     images = relationship("Image", back_populates="blog_post")
 
     user_id = Column(Integer, ForeignKey("user_account.id"))
@@ -63,8 +68,3 @@ class Image(Base):
     caption = Column(String, nullable=True)
     blog_post_id = Column(Integer, ForeignKey("blog_post.id"))
     blog_post = relationship("BlogPost", back_populates="images")
-
-
-
-
-

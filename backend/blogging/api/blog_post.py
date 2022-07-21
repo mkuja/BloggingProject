@@ -8,7 +8,7 @@ from ..auxialiry.blog_post import (
 )
 
 
-blp = Blueprint("BlogPost", "Blog Post",
+blp = Blueprint("Blog Post", "Blog Post",
                 url_prefix="/api/v1/blog/post",
                 description="CRUD blog posts.")
 

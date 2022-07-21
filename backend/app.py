@@ -46,8 +46,10 @@ import blogging.containers as containers
 import blogging.api.user as user_api
 import blogging.api.auth as auth_api
 import blogging.api.blog_post as blog_post_api
+import blogging.api.comment as comment_api
 
 api.register_blueprint(user_api.blp)
 api.register_blueprint(auth_api.blp)
 api.register_blueprint(blog_post_api.blp)
+api.register_blueprint(comment_api.blp)
 

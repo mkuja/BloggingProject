@@ -42,27 +42,32 @@ class BlogPostImage(Schema):
     caption = fields.Str()
 
 
+class BlogPostComment(Schema):
+    id = fields.Int(dump_only=True)
+    nickname = fields.Str()
+    content = fields.Str(required=True)
+
+    blog_post_id = fields.Int()
+    user_id = fields.Int()
+
+    children = fields.Nested(lambda: BlogPostComment(many=True))
+
+    parent_id = fields.Int()
+
+    user_id = fields.Int(dump_only=True)
+
+
 class BlogPostSchema(Schema):
     id = fields.Int()
     title = fields.Str(required=True)
     published = MyDateTimeField()
     summary = fields.Str()
     content = fields.Str(required=True)
+    comments = fields.Nested(BlogPostComment(), many=True)
     images = fields.List(
         fields.Nested(BlogPostImage())
     )
 
-
-
-
     # replies = fields.List(
     #     fields.Nested(lambda: BlogPostSchema(exclude=("replies",)))
     # )
-
-
-class BlogPostComment(Schema):
-    id = fields.Int(dump_only=True)
-    nickname = fields.Str(required=False)
-    blog_post = fields.Nested(BlogPostSchema, required=True)
-    user_id = fields.Int(required=True)
-

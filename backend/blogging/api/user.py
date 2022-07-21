@@ -12,7 +12,7 @@ from blogging.marshalling.schemas import UserSchema, UserPatchSchema
 import blogging.database.models as models
 
 
-blp = Blueprint("UserSchema", "users", url_prefix="/api/v1/user", description="Operations on users")
+blp = Blueprint("User", "users", url_prefix="/api/v1/user", description="Operations on users")
 
 
 @blp.route("/")
