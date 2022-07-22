@@ -1,8 +1,8 @@
 """[ADD] First
 
-Revision ID: 105d49d1728c
+Revision ID: 04853ce6d5d4
 Revises: 
-Create Date: 2022-07-22 02:34:03.606094
+Create Date: 2022-07-22 10:05:49.998215
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '105d49d1728c'
+revision = '04853ce6d5d4'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -29,7 +29,7 @@ def upgrade() -> None:
     sa.Column('last_logged_out', sa.Integer(), nullable=True),
     sa.Column('registration_date', sa.DateTime(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('email'),
+    sa.UniqueConstraint('email')
     )
     op.create_table('blog_post',
     sa.Column('id', sa.Integer(), nullable=False),
