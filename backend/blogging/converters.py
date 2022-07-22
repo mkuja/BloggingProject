@@ -21,9 +21,9 @@ class DateConverter(BaseConverter):
     def to_python(self, value: str) -> Union[date, bool]:
         """Convert to Python."""
 
+        if value == "any":
+            return value
         as_list = [int(x) for x in value.split("-")]
-        if as_list[0] == "any":
-            return True
         if not (0 < as_list[0] <= 31 and
                 0 < as_list[1] <= 12):
             raise ValidationError("Given date or month is invalid.")
@@ -33,6 +33,6 @@ class DateConverter(BaseConverter):
     def to_url(self, d: Union[date, bool]) -> str:
         """Convert to url."""
 
-        if d is True:
-            return "any"
+        if d == "any":
+            return d
         return f"{d.day}-{d.month}-{d.year}"

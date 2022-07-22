@@ -74,7 +74,15 @@ def get_blog_posts_by_dates(from_: Union[date, Literal["any"]],
                             to:  Union[date, Literal["any"]],
                             reverse=False,
                             ssession: SessionService = Provide[Container.session_service]):
-    """Get blog posts by from and to dates."""
+    """Get blog posts by from and to dates.
+    """
+
+    if to == "any":
+        today = date.today()
+        to = datetime.datetime(day=today.day, month=today.month, year=today.year + 2)
+    if from_ == "any":
+        from_ = datetime.datetime(day=1, month=1, year=1900)
+
     from_datetime = datetime.datetime(day=from_.day, month=from_.month, year=from_.year)
     to_datetime = datetime.datetime(day=to.day, month=to.month,
                                     year=to.year, hour=23,
