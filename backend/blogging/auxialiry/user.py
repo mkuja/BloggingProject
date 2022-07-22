@@ -1,7 +1,7 @@
 from functools import wraps
 from typing import Dict, Union, Callable, Tuple
 
-from dependency_injector.wiring import Provide
+from dependency_injector.wiring import Provide, inject
 from flask_jwt_extended import get_jwt_identity
 from passlib.hash import bcrypt
 from sqlalchemy import select, delete
@@ -50,6 +50,7 @@ def jwt_identity_and_user_id_match(user_id,
         return False
 
 
+@inject
 def author_required(route: Callable, ssession: SessionService = Provide[DBServicesContainer.session_service]):
     """This is the authorization decorator that checks whether client is an author."""
 
@@ -67,6 +68,7 @@ def author_required(route: Callable, ssession: SessionService = Provide[DBServic
     return inner
 
 
+@inject
 def get_user_by_email(email: str,
                       sservice: SessionService = Provide[DBServicesContainer.session_service]
                       ) -> Union[Dict, None]:
@@ -81,6 +83,7 @@ def get_user_by_email(email: str,
         return
 
 
+@inject
 def delete_user_by_id(id, sservice: SessionService = Provide[DBServicesContainer.session_service]
                       ) -> None:
     stmt = (delete(User)
@@ -90,6 +93,7 @@ def delete_user_by_id(id, sservice: SessionService = Provide[DBServicesContainer
         session.commit()
 
 
+@inject
 def patch_user_by_id(new_data: Dict, id: int,
                      sservice: SessionService = Provide[DBServicesContainer.session_service]
                      ) -> Tuple[Dict[str, str], int]:

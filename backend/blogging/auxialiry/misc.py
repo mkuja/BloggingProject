@@ -1,6 +1,6 @@
 from typing import Dict, Any, Union
 
-from dependency_injector.wiring import Provide
+from dependency_injector.wiring import Provide, inject
 from sqlalchemy import select
 
 from blogging.database.models import Settings
@@ -9,6 +9,7 @@ from blogging.di.session_service import SessionService
 from blogging.marshalling.schemas import SettingsSchema
 
 
+@inject
 def set_app_settings(service: SessionService = Provide[DBServicesContainer.session_service],
                      **settings: Dict[str, Any]
                      ) -> None:
@@ -41,6 +42,7 @@ def set_app_settings(service: SessionService = Provide[DBServicesContainer.sessi
         session.commit()
 
 
+@inject
 def get_app_settings(service: SessionService = Provide[DBServicesContainer.session_service]
                      ) -> Union[Dict[str, Any], None]:
     """Get application settings.
@@ -48,7 +50,7 @@ def get_app_settings(service: SessionService = Provide[DBServicesContainer.sessi
     :returns A dict with same keys as what is passed as keyword arguments for set_app_settings()."""
 
     stmt = (select(Settings)
-            .order_by(Settings.id)
+            .order_by(Settings.id.desc())
             .limit(1))
     with service.session as session:
         settings = session.scalar(stmt)

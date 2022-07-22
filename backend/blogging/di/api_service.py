@@ -1,8 +1,12 @@
 import os
 
+from dotenv import load_dotenv
 from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_smorest import Api
+
+
+load_dotenv()
 
 
 class ApiService:
@@ -16,7 +20,7 @@ class ApiService:
         self._app.config["OPENAPI_REDOC_PATH"] = "/redoc"
         self._app.config[
             "OPENAPI_REDOC_URL"] = "https://cdn.jsdelivr.net/npm/redoc@2.0.0-alpha.17/bundles/redoc.standalone.js"
-        self._app.config["JWT+-_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
+        self._app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
         self._api = Api(self._app)
 
         self._jwt = JWTManager(self._app)
