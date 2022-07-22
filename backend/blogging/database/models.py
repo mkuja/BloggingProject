@@ -74,10 +74,12 @@ class Settings(Base):
     __tablename__ = "settings"
 
     id = Column(Integer, primary_key=True)
-    anonymous_can_comment = Column(Boolean, nullable=False)
-    users_can_register = Column(Boolean, nullable=False)
-    verify_email = Column(Boolean, nullable=False)
-    show_social_media_shares = Column(Boolean, nullable=False)
-    date_and_time_format = Column(String(50), nullable=False)
+    anonymous_can_comment = Column(Boolean, nullable=False, default=False)
+    users_can_register = Column(Boolean, nullable=False, default=False)
+    verify_email = Column(Boolean, nullable=False, default=True)
+    show_social_media_shares = Column(Boolean, nullable=False, default=False)
+    use_comment_captcha_for_anonymous = Column(Boolean, nullable=False, default=True)
+    use_comment_captcha_for_registered = Column(Boolean, nullable=False, default=False)
+    date_and_time_format = Column(String(50), nullable=False, default="")
 
 

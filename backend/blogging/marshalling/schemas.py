@@ -68,11 +68,12 @@ class BlogPostSchema(Schema):
     )
 
 
-class Settings(Schema):
+class SettingsSchema(Schema):
     id = fields.Int(dump_only=True)
-    jwt_secret_key = fields.Str(load_only=True)
     anonymous_can_comment = fields.Boolean()
     users_can_register = fields.Boolean()
     verify_email = fields.Boolean()
     show_social_media_shares = fields.Boolean()
+    use_comment_captcha_for_anonymous = fields.Boolean()
+    use_comment_captcha_for_registered = fields.Boolean()
     date_and_time_format = fields.Str()

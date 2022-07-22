@@ -1,14 +1,16 @@
 from dependency_injector import providers, containers
 
-from blogging.di.settings_service import AppSettingsService
+from blogging.di.api_service import ApiService
+# from blogging.di.settings_service import AppSettingsService
 
 
-class DBServicesContainer(containers.DeclarativeContainer):
+class AppServicesContainer(containers.DeclarativeContainer):
 
     config = providers.Configuration()
     wiring_config = containers.WiringConfiguration(
         modules=[
-            #"app",
+            "app",
+            "blogging.auxialiry.auth",
             #"blogging.database.models"
         ],
         packages=[
@@ -17,10 +19,15 @@ class DBServicesContainer(containers.DeclarativeContainer):
         ]
     )
 
-    app_settings = providers.Singleton(
-        AppSettingsService
+    # app_settings = providers.Singleton(
+    #     AppSettingsService
+    # )
+
+    api_service = providers.Singleton(
+        ApiService
     )
 
 
-other_services_container = DBServicesContainer()
+app_services_container = AppServicesContainer()
+print("AUTO-WIRING AppServicesContainer:", app_services_container.is_auto_wiring_enabled())
 

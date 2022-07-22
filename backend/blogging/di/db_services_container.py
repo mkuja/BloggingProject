@@ -12,11 +12,9 @@ class DBServicesContainer(containers.DeclarativeContainer):
     wiring_config = containers.WiringConfiguration(
         modules=[
             "app",
-            #"blogging.database.models"
         ],
         packages=[
             "blogging.auxialiry",
-        #    "blogging.database.alembic"
         ]
     )
 

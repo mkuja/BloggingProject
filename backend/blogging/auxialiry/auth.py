@@ -2,7 +2,9 @@ import time
 from datetime import timedelta
 from typing import Union, Dict, Tuple
 
+from blogging.di.api_service import ApiService
 from blogging.di.db_services_container import DBServicesContainer
+from blogging.di.other_services_container import AppServicesContainer
 from blogging.di.session_service import SessionService
 from dependency_injector.wiring import Provide
 from flask_jwt_extended import (
@@ -12,9 +14,13 @@ from flask_jwt_extended import (
 from passlib.hash import bcrypt
 from sqlalchemy import select
 
-from app import jwt
-#from blogging.auxialiry.user import get_user_by_email
 from blogging.database.models import User
+
+
+def get_api_service(service: ApiService = Provide[AppServicesContainer.api_service]) -> ApiService:
+    return service.provider()
+api_service = get_api_service()
+jwt = api_service.jwt
 
 
 def get_user_by_email(email: str,
