@@ -1,9 +1,11 @@
 import datetime
 from time import time
 
+from dependency_injector.wiring import Provide
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, ForeignKey
-
 from sqlalchemy.orm import declarative_base, relationship
+
+from blogging.containers import Container
 
 Base = declarative_base()
 
@@ -68,3 +70,17 @@ class Image(Base):
     caption = Column(String, nullable=True)
     blog_post_id = Column(Integer, ForeignKey("blog_post.id"))
     blog_post = relationship("BlogPost", back_populates="images")
+
+
+class Settings(Base):
+    __tablename__ = "settings"
+
+    id = Column(Integer, primary_key=True)
+    jwt_secret_key = Column(String(80), nullable=False, default=Provide[Container.app_settings])
+    anonymous_can_comment = Column(Boolean, nullable=False)
+    users_can_register = Column(Boolean, nullable=False)
+    verify_email = Column(Boolean, nullable=False)
+    show_social_media_shares = Column(Boolean, nullable=False)
+    date_and_time_format = Column(String(50), nullable=False)
+
+

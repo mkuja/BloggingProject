@@ -67,6 +67,12 @@ class BlogPostSchema(Schema):
         fields.Nested(BlogPostImage())
     )
 
-    # replies = fields.List(
-    #     fields.Nested(lambda: BlogPostSchema(exclude=("replies",)))
-    # )
+
+class Settings(Schema):
+    id = fields.Int(dump_only=True)
+    jwt_secret_key = fields.Str(load_only=True)
+    anonymous_can_comment = fields.Boolean()
+    users_can_register = fields.Boolean()
+    verify_email = fields.Boolean()
+    show_social_media_shares = fields.Boolean()
+    date_and_time_format = fields.Str()

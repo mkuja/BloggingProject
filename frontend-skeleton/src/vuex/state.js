@@ -9,8 +9,7 @@ const state = {
             usersCanRegister: null,
             verifyEmail: null,
             showSocialMediaShares: null,
-            dateFormat: null,
-            timeFormat: null,
+            dateAndTimeFormat: null,
          }
       }
    },
@@ -20,8 +19,7 @@ const state = {
       usersCanRegister: state => state.appSettings.usersCanRegister,
       verifyEmail: state => state.appSettings.verifyEmail,
       showSocialMediaShares: state => state.appSettings.showSocialMediaShares,
-      dateFormat: state => state.appSettings.dateFormat,
-      timeFormat: state => state.appSettings.timeFormat,
+      dateAndTimeFormat: state => state.appSettings.dateFormat,
    }),
    mutations: {
       toggleRegisteredCanComment(state) {

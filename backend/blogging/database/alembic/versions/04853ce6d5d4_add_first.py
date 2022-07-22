@@ -29,7 +29,8 @@ def upgrade() -> None:
     sa.Column('last_logged_out', sa.Integer(), nullable=True),
     sa.Column('registration_date', sa.DateTime(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('email')
+    sa.UniqueConstraint('email'),
+    sa.UniqueConstraint('username')
     )
     op.create_table('blog_post',
     sa.Column('id', sa.Integer(), nullable=False),

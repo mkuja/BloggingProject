@@ -8,9 +8,9 @@ from sqlalchemy import select, delete
 from sqlalchemy.exc import IntegrityError
 
 from blogging.containers import Container
-from blogging.database.models import User
 from blogging.services import SessionService
 from ..marshalling.schemas import UserSchema
+from blogging.database.models import User
 
 
 def create_user(name, username, email, password,

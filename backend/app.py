@@ -42,7 +42,6 @@ api.register_converter(
 )
 
 
-import blogging.containers as containers
 import blogging.api.user as user_api
 import blogging.api.auth as auth_api
 import blogging.api.blog_post as blog_post_api

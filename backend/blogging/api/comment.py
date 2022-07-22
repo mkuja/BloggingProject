@@ -49,7 +49,7 @@ class CreateComment(MethodView):
         if saved_comment := create_new_blog_post_comment(comment):
             return saved_comment, 201
         else:
-            return {"message": "IntegrityError: Make sure parent_id or blog_post_id is correctly set."
+            return {"message": "IntegrityError: Make sure parent_id or blog_post_id refer to an existing thing."
                    }, 422
 
 
