@@ -1,21 +1,18 @@
 from typing import Dict, Union, Tuple
 
-import psycopg2
-import sqlalchemy.exc
 from dependency_injector.wiring import Provide
 from flask_jwt_extended import get_jwt_identity
-from psycopg2.errorcodes import FOREIGN_KEY_VIOLATION
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 
-from blogging.containers import Container
+from blogging.di.db_services_container import DBServicesContainer
 from blogging.database.models import Comment, User
 from blogging.marshalling.schemas import BlogPostComment
-from blogging.services import SessionService
+from blogging.di.session_service import SessionService
 
 
 def create_new_blog_post_comment(comment,
-                                 ssession: SessionService = Provide[Container.session_service]
+                                 ssession: SessionService = Provide[DBServicesContainer.session_service]
                                  ) -> Dict:
     """Create a new blog post."""
 
@@ -31,7 +28,7 @@ def create_new_blog_post_comment(comment,
 
 
 def get_comment_by_id(id_,
-                      ssession: SessionService = Provide[Container.session_service]
+                      ssession: SessionService = Provide[DBServicesContainer.session_service]
                       ) -> Union[Dict, None]:
     """Get comment by id_"""
 
@@ -44,7 +41,7 @@ def get_comment_by_id(id_,
         return
 
 
-def is_user_with_identity(email: str, ssession: SessionService = Provide[Container.session_service]
+def is_user_with_identity(email: str, ssession: SessionService = Provide[DBServicesContainer.session_service]
                           ) -> bool:
     """Return whether given email matches one in JWT.
 
@@ -54,7 +51,7 @@ def is_user_with_identity(email: str, ssession: SessionService = Provide[Contain
 
 
 def patch_comment_by_id(id_, data: Dict,
-                        ssession: SessionService = Provide[Container.session_service]
+                        ssession: SessionService = Provide[DBServicesContainer.session_service]
                         ) -> Tuple[Dict[str, str], int]:
     """Patch a comment by id."""
 

@@ -41,7 +41,7 @@ api.register_converter(
     date_to_params_schema
 )
 
-
+import blogging.database.models as models
 import blogging.api.user as user_api
 import blogging.api.auth as auth_api
 import blogging.api.blog_post as blog_post_api

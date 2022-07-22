@@ -1,29 +1,39 @@
-import datetime
 import time
 from datetime import timedelta
 from typing import Union, Dict, Tuple
 
+from blogging.di.db_services_container import DBServicesContainer
+from blogging.di.session_service import SessionService
 from dependency_injector.wiring import Provide
 from flask_jwt_extended import (
     create_access_token, jwt_required, get_jwt_identity,
-    create_refresh_token, get_jwt_header
+    create_refresh_token
 )
 from passlib.hash import bcrypt
-
-from app import jwt
-from blogging.auxialiry.user import get_user_by_email
-from blogging.containers import Container
-from blogging.database.models import User
-
 from sqlalchemy import select
 
-from blogging.marshalling.schemas import UserSchema
-from blogging.services import SessionService
+from app import jwt
+#from blogging.auxialiry.user import get_user_by_email
+from blogging.database.models import User
+
+
+def get_user_by_email(email: str,
+                      sservice: SessionService = Provide[DBServicesContainer.session_service]
+                      ) -> Union[Dict, None]:
+    """Get user by email address."""
+
+    stmt = (select(User)
+            .where(User.email == email))
+    with sservice.session as session:
+        user = session.scalar(stmt)
+        if user:
+            return UserSchema().dump(user, many=False)
+        return
 
 
 def login(username,
           password,
-          session_service=Provide[Container.session_service]
+          session_service=Provide[DBServicesContainer.session_service]
           ) -> Union[Dict[str, str] | bool]:
     """Return a fresh JWT on successful login, False otherwise."""
 
@@ -44,7 +54,7 @@ def login(username,
         return False
 
 
-def refresh(ssession: SessionService = Provide[Container.session_service]
+def refresh(ssession: SessionService = Provide[DBServicesContainer.session_service]
             ) -> Tuple[Dict[str, str], int]:
     identity = get_jwt_identity()
     stmt = (select(User)
@@ -61,7 +71,7 @@ def refresh(ssession: SessionService = Provide[Container.session_service]
 
 
 @jwt_required()
-def logout(sservice: SessionService = Provide[Container.session_service]) -> bool:
+def logout(sservice: SessionService = Provide[DBServicesContainer.session_service]) -> bool:
     """Invalidate all user tokens prior to this point in time.
 
     A JWT is required for this.

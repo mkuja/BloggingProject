@@ -2,33 +2,13 @@ from random import choices
 from string import ascii_letters, punctuation
 from typing import Dict, Any
 
-from dependency_injector.wiring import Provide, Container
-from sqlalchemy import create_engine
+from dependency_injector.wiring import Provide
 from sqlalchemy import select
-from sqlalchemy.orm import Session
 
+from blogging.containers import Container
 from blogging.database.models import Settings
+from blogging.session_service import SessionService
 from blogging.marshalling.schemas import Settings as SettingsSchema
-
-
-class SessionService:
-
-    def __init__(self, connection_string, *args, **kwargs):
-        """
-        :param connection_string: ex. "postgresql+asyncpg://scott:tiger@localhost/test"
-        :param args:
-        :param kwargs: ex. echo=True
-        """
-        self._engine = create_engine(connection_string, *args, **kwargs)
-        self._session = Session(self._engine)
-
-    @property
-    def engine(self):
-        return self._engine
-
-    @property
-    def session(self):
-        return self._session
 
 
 class SettingsTableIsEmpty(Exception):
@@ -81,5 +61,4 @@ class AppSettingsService:
                 return "".join(choices(ascii_letters + punctuation, k=80))
 
             return settings.jwt_secret_key
-
 

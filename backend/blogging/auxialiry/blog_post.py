@@ -5,14 +5,14 @@ from typing import Union, Dict, Literal
 from dependency_injector.wiring import Provide
 from sqlalchemy import select, delete
 
-from blogging.containers import Container
+from blogging.di.db_services_container import DBServicesContainer
 from blogging.database.models import BlogPost
 from blogging.marshalling.schemas import BlogPostSchema
-from blogging.services import SessionService
+from blogging.di.session_service import SessionService
 
 
 def create_new_blog_post(new_post,
-                         ssession: SessionService = Provide[Container.session_service]
+                         ssession: SessionService = Provide[DBServicesContainer.session_service]
                          ) -> Union[None, Dict]:
     """Create a new blog post."""
 
@@ -26,7 +26,7 @@ def create_new_blog_post(new_post,
         raise e
 
 
-def get_blog_post_by_id(id_, ssession: SessionService = Provide[Container.session_service]
+def get_blog_post_by_id(id_, ssession: SessionService = Provide[DBServicesContainer.session_service]
                         ) -> Union[Dict, None]:
     """Get blog post by id."""
 
@@ -38,7 +38,7 @@ def get_blog_post_by_id(id_, ssession: SessionService = Provide[Container.sessio
 
 
 def patch_blog_post_by_id(id_, data: Dict,
-                          ssession: SessionService = Provide[Container.session_service]
+                          ssession: SessionService = Provide[DBServicesContainer.session_service]
                           ) -> Union[Dict, None]:
     """Alter given fields of a blog post with given id."""
 
@@ -56,7 +56,8 @@ def patch_blog_post_by_id(id_, data: Dict,
         return BlogPostSchema().dump(blog_post)
 
 
-def delete_blog_post_by_id(id_, sservice: SessionService = Provide[Container.session_service]
+def delete_blog_post_by_id(id_,
+                           sservice: SessionService = Provide[DBServicesContainer.session_service]
                            ) -> bool:
     """Delete a blog post by ID.
 
@@ -73,7 +74,7 @@ def delete_blog_post_by_id(id_, sservice: SessionService = Provide[Container.ses
 def get_blog_posts_by_dates(from_: Union[date, Literal["any"]],
                             to:  Union[date, Literal["any"]],
                             reverse=False,
-                            ssession: SessionService = Provide[Container.session_service]):
+                            ssession: SessionService = Provide[DBServicesContainer.session_service]):
     """Get blog posts by from and to dates.
     """
 

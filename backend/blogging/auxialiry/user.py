@@ -7,14 +7,14 @@ from passlib.hash import bcrypt
 from sqlalchemy import select, delete
 from sqlalchemy.exc import IntegrityError
 
-from blogging.containers import Container
-from blogging.services import SessionService
+from blogging.di.db_services_container import DBServicesContainer
+from blogging.di.session_service import SessionService
 from ..marshalling.schemas import UserSchema
 from blogging.database.models import User
 
 
 def create_user(name, username, email, password,
-                session_service: SessionService = Provide[Container.session_service]):
+                session_service: SessionService = Provide[DBServicesContainer.session_service]):
     """Create user with username."""
 
     try:
@@ -28,7 +28,7 @@ def create_user(name, username, email, password,
         return {"message": "Email is already registered."}
 
 
-def is_author(email: str, ssession: SessionService = Provide[Container.session_service]):
+def is_author(email: str, ssession: SessionService = Provide[DBServicesContainer.session_service]):
     """Check if email given has authority."""
 
     with ssession.session as session:
@@ -39,7 +39,7 @@ def is_author(email: str, ssession: SessionService = Provide[Container.session_s
 
 
 def jwt_identity_and_user_id_match(user_id,
-                                   ssession: SessionService = Provide[Container.session_service]
+                                   ssession: SessionService = Provide[DBServicesContainer.session_service]
                                    ) -> bool:
     with ssession.session as session:
         stmt = (select(User)
@@ -50,7 +50,7 @@ def jwt_identity_and_user_id_match(user_id,
         return False
 
 
-def author_required(route: Callable, ssession: SessionService = Provide[Container.session_service]):
+def author_required(route: Callable, ssession: SessionService = Provide[DBServicesContainer.session_service]):
     """This is the authorization decorator that checks whether client is an author."""
 
     @wraps(route)
@@ -68,7 +68,7 @@ def author_required(route: Callable, ssession: SessionService = Provide[Containe
 
 
 def get_user_by_email(email: str,
-                      sservice: SessionService = Provide[Container.session_service]
+                      sservice: SessionService = Provide[DBServicesContainer.session_service]
                       ) -> Union[Dict, None]:
     """Get user by email address."""
 
@@ -81,7 +81,7 @@ def get_user_by_email(email: str,
         return
 
 
-def delete_user_by_id(id, sservice: SessionService = Provide[Container.session_service]
+def delete_user_by_id(id, sservice: SessionService = Provide[DBServicesContainer.session_service]
                       ) -> None:
     stmt = (delete(User)
             .where(User.id == id))
@@ -91,7 +91,7 @@ def delete_user_by_id(id, sservice: SessionService = Provide[Container.session_s
 
 
 def patch_user_by_id(new_data: Dict, id: int,
-                     sservice: SessionService = Provide[Container.session_service]
+                     sservice: SessionService = Provide[DBServicesContainer.session_service]
                      ) -> Tuple[Dict[str, str], int]:
     stmt = (select(User)
             .where(User.id == id))

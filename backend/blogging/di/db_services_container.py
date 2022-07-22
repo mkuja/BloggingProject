@@ -3,16 +3,16 @@ from os import getenv
 import toml
 from dependency_injector import containers, providers
 
-from . import services
+from blogging.di.session_service import SessionService
 
 
-class Container(containers.DeclarativeContainer):
+class DBServicesContainer(containers.DeclarativeContainer):
 
     config = providers.Configuration()
     wiring_config = containers.WiringConfiguration(
         modules=[
             "app",
-            "blogging.database.models"
+            #"blogging.database.models"
         ],
         packages=[
             "blogging.auxialiry",
@@ -21,15 +21,11 @@ class Container(containers.DeclarativeContainer):
     )
 
     session_service = providers.Singleton(
-        services.SessionService,
+        SessionService,
         connection_string=getenv("BLOG_DB_CONNECTION_STRING")
     )
 
-    app_settings = providers.Singleton(
-        services.AppSettingsService
-    )
-
-container = Container()
-container.config.from_dict(toml.load("settings.toml"))  # TODO: Remove this when settings are in DB.
+db_services_container = DBServicesContainer()
+db_services_container.config.from_dict(toml.load("settings.toml"))  # TODO: Remove this when settings are in DB.
 
 
