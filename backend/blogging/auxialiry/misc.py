@@ -48,7 +48,7 @@ def get_app_settings(service: SessionService = Provide[DBServicesContainer.sessi
     :returns A dict with same keys as what is passed as keyword arguments for set_app_settings()."""
 
     stmt = (select(Settings)
-            .order_by(Settings.id)
+            .order_by(Settings.id.desc())
             .limit(1))
     with service.session as session:
         settings = session.scalar(stmt)

@@ -2,11 +2,7 @@ import time
 from datetime import timedelta
 from typing import Union, Dict, Tuple
 
-from blogging.di.api_service import ApiService
-from blogging.di.db_services_container import DBServicesContainer
-from blogging.di.other_services_container import AppServicesContainer
-from blogging.di.session_service import SessionService
-from dependency_injector.wiring import Provide
+from dependency_injector.wiring import Provide, inject
 from flask_jwt_extended import (
     create_access_token, jwt_required, get_jwt_identity,
     create_refresh_token
@@ -15,14 +11,21 @@ from passlib.hash import bcrypt
 from sqlalchemy import select
 
 from blogging.database.models import User
+from blogging.di.api_service import ApiService
+from blogging.di.db_services_container import DBServicesContainer
+from blogging.di.other_services_container import AppServicesContainer
+from blogging.di.session_service import SessionService
+from blogging.marshalling.schemas import UserSchema
 
 
+@inject
 def get_api_service(service: ApiService = Provide[AppServicesContainer.api_service]) -> ApiService:
     return service.provider()
 api_service = get_api_service()
 jwt = api_service.jwt
 
 
+@inject
 def get_user_by_email(email: str,
                       sservice: SessionService = Provide[DBServicesContainer.session_service]
                       ) -> Union[Dict, None]:
@@ -37,6 +40,7 @@ def get_user_by_email(email: str,
         return
 
 
+@inject
 def login(username,
           password,
           session_service=Provide[DBServicesContainer.session_service]
@@ -60,6 +64,7 @@ def login(username,
         return False
 
 
+@inject
 def refresh(ssession: SessionService = Provide[DBServicesContainer.session_service]
             ) -> Tuple[Dict[str, str], int]:
     identity = get_jwt_identity()
