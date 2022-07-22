@@ -10,10 +10,11 @@ class Container(containers.DeclarativeContainer):
     config = providers.Configuration()
     wiring_config = containers.WiringConfiguration(
         modules=[
-            "app"
+            "app",
         ],
         packages=[
-            "blogging.auxialiry"
+            "blogging.auxialiry",
+         #   "blogging.database.alembic"
         ]
     )
 

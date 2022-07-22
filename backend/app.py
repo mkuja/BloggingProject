@@ -8,8 +8,8 @@ from flask_smorest import Api
 from blogging.converters import DateConverter
 
 
-def load_blog_dotenv(secrets_file: str):
-    load_dotenv(secrets_file)
+def load_blog_dotenv():
+    load_dotenv(".env")
 
 
 app = Flask(__name__)

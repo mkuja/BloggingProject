@@ -1,6 +1,7 @@
 import os
 from logging.config import fileConfig
 
+from dotenv import load_dotenv
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
@@ -8,14 +9,12 @@ from alembic import context
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
-from app import load_blog_dotenv
-from blogging.containers import container
+# from blogging.containers import container
 from blogging.database.models import Base
 
 config = context.config
 
-load_blog_dotenv(container.config.secrets.get("secrets_file"))
-print(f"BLOG_DB_CONNECTION_STRING={os.getenv('BLOG_DB_CONNECTION_STRING')}")
+load_dotenv()
 config.set_main_option("sqlalchemy.url", os.getenv("BLOG_DB_CONNECTION_STRING"))
 
 

@@ -1,8 +1,8 @@
-"""First
+"""[ADD] First
 
-Revision ID: 46e79f6d3476
+Revision ID: 105d49d1728c
 Revises: 
-Create Date: 2022-07-20 22:38:02.599807
+Create Date: 2022-07-22 02:34:03.606094
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '46e79f6d3476'
+revision = '105d49d1728c'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -29,7 +29,7 @@ def upgrade() -> None:
     sa.Column('last_logged_out', sa.Integer(), nullable=True),
     sa.Column('registration_date', sa.DateTime(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('email')
+    sa.UniqueConstraint('email'),
     )
     op.create_table('blog_post',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -44,12 +44,12 @@ def upgrade() -> None:
     op.create_table('comment',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('nickname', sa.String(length=20), nullable=True),
-    sa.Column('comment', sa.Text(), nullable=False),
+    sa.Column('content', sa.Text(), nullable=False),
     sa.Column('blog_post_id', sa.Integer(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=True),
     sa.Column('parent_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['blog_post_id'], ['blog_post.id'], ),
-    sa.ForeignKeyConstraint(['parent_id'], ['comment.id'], ),
+    sa.ForeignKeyConstraint(['blog_post_id'], ['blog_post.id'], ondelete="CASCADE"),
+    sa.ForeignKeyConstraint(['parent_id'], ['comment.id'], ondelete="CASCADE"),
     sa.ForeignKeyConstraint(['user_id'], ['user_account.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -59,7 +59,7 @@ def upgrade() -> None:
     sa.Column('absolute_path', sa.String(), nullable=False),
     sa.Column('caption', sa.String(), nullable=True),
     sa.Column('blog_post_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['blog_post_id'], ['blog_post.id'], ),
+    sa.ForeignKeyConstraint(['blog_post_id'], ['blog_post.id'], ondelete="CASCADE"),
     sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###

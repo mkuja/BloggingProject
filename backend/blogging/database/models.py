@@ -39,7 +39,7 @@ class Comment(Base):
     user = relationship("User", back_populates="comments")
 
     parent_id = Column(Integer, ForeignKey("comment.id"), nullable=True)
-    children = relationship("Comment")
+    children = relationship("Comment", cascade="all, delete")
 
 
 class BlogPost(Base):
@@ -51,9 +51,9 @@ class BlogPost(Base):
     summary = Column(Text, nullable=True)
     content = Column(Text, nullable=False)
 
-    comments = relationship("Comment", back_populates="blog_post")
+    comments = relationship("Comment", back_populates="blog_post", cascade="all, delete-orphan")
 
-    images = relationship("Image", back_populates="blog_post")
+    images = relationship("Image", back_populates="blog_post", cascade="all, delete-orphan")
 
     user_id = Column(Integer, ForeignKey("user_account.id"))
     user = relationship("User", back_populates="blog_posts")

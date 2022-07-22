@@ -55,8 +55,6 @@ class BlogPostComment(Schema):
 
     parent_id = fields.Int()
 
-    user_id = fields.Int(dump_only=True)
-
 
 class BlogPostSchema(Schema):
     id = fields.Int()

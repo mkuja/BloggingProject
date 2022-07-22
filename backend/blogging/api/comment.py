@@ -6,6 +6,7 @@ from blogging.auxialiry.comment import (
     create_new_blog_post_comment, get_comment_by_id,
     patch_comment_by_id
 )
+from blogging.auxialiry.user import jwt_identity_and_user_id_match
 from blogging.marshalling.schemas import BlogPostComment
 
 blp = Blueprint("Blog Post Comment", "Blog Post Comment",
@@ -18,7 +19,7 @@ class CreateComment(MethodView):
     """Make comments.
     """
 
-    @jwt_required(optional=True)  # TODO: Get optional value from database.
+    @jwt_required(optional=False)  # TODO: Get optional value from database.
     @blp.arguments(BlogPostComment)
     @blp.response(201, schema=BlogPostComment)
     @blp.response(422)
@@ -33,6 +34,12 @@ class CreateComment(MethodView):
 
         if not (bool(comment.get("blog_post_id", False) ^ bool(comment.get("parent_id", False)))):
             return {"message": "Argument error: Provide one and only one of blog_post_id or parent_id."}, 422
+
+        if not (bool(comment.get("nickname", False)) ^ bool(comment.get("user_id", False))):
+            return {"message": "One or the other of nickname and user_id must be set, but not both."}, 401
+
+        if not (comment.get("user_id") and jwt_identity_and_user_id_match(comment.get("user_id"))):
+            return {"message": "This is not your user_id. Get you paws off."}
 
         if not get_jwt_identity() and not comment.get("nickname"):
             return {"message": "Argument error: When not logged in, nickname must be provided for a comment."}, 422
